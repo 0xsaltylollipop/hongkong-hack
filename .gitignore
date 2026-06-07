@@ -10,3 +10,6 @@ build/
 observations/
 agent-artifacts/
 .DS_Store
+pitch.md
+vm_setup.sh
+vm_train.sh
