@@ -8,14 +8,18 @@ robot:
   calibration_dir: .cache/calibration/so101
 
 policy:
-  path: /absolute/path/or/hf-user/act-policy-repo
+  # Teammate ACT sorting policy on Hugging Face.
+  # Can also be replaced with a local checkpoint path on the hardware laptop.
+  path: adrrrobo/sorting_ACT
   device: auto
   fps: 30
   task: Sort cubes into the two boxes.
 
 dataset:
-  repo_id: hf-user/so101-sorting-dataset
-  local_path: /absolute/path/to/local/lerobot/dataset
+  # Dataset listed by the ACT policy model card.
+  repo_id: adrrrobo/Hackathon2_20260606_210708
+  # Leave blank to load by repo_id; set only if the dataset is already local.
+  local_path: ""
 
 cameras:
   count: 1

@@ -83,6 +83,14 @@ Fill in:
 - camera indices
 - `ANTHROPIC_API_KEY`
 
+The default example config is already wired to the teammate policy:
+
+- policy: `adrrrobo/sorting_ACT`
+- dataset: `adrrrobo/Hackathon2_20260606_210708`
+
+Replace those only if the hardware laptop should use a local checkpoint or local
+dataset path instead.
+
 Do not edit code for normal hardware setup.
 
 ## Agent usage
@@ -252,6 +260,9 @@ hwexec dataset inspect
 - Policy deployment target: `lerobot-rollout` with `--strategy.type=base`,
   `--policy.path`, `--robot.type`, `--robot.port`, `--robot.cameras`,
   `--duration`, `--fps`, and `--task`.
+- Integrated teammate ACT policy: `adrrrobo/sorting_ACT`.
+- Integrated dataset repo from that model card:
+  `adrrrobo/Hackathon2_20260606_210708`.
 - Direct observe/move target: documented import path
   `lerobot.robots.so_follower.SO101FollowerConfig` / `SO101Follower`, with a
   fallback to `lerobot.robots.so101_follower` for installs that expose that
