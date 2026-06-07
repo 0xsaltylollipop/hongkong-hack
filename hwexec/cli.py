@@ -67,6 +67,12 @@ def build_parser() -> argparse.ArgumentParser:
     inspect.add_argument("--dry-run", action="store_true", default=argparse.SUPPRESS, help="Print configured dataset target without loading it.")
     inspect.set_defaults(handler=_dataset_inspect)
 
+    serve = sub.add_parser("serve", help="Serve the control-plane UI and thin web API.")
+    serve.add_argument("--mock", action="store_true", default=argparse.SUPPRESS, help="Run server endpoints in mock mode.")
+    serve.add_argument("--host", default=None, help="Host to bind. Defaults to config or HWEXEC_HOST.")
+    serve.add_argument("--port", type=int, default=None, help="Port to bind. Defaults to config, HWEXEC_PORT, or 8765.")
+    serve.set_defaults(handler=_serve)
+
     return parser
 
 
@@ -89,6 +95,13 @@ def _run_policy(args: argparse.Namespace, controller: HWExecController) -> dict[
 
 def _dataset_inspect(args: argparse.Namespace, controller: HWExecController) -> dict[str, Any]:
     return controller.dataset_inspect(dry_run=args.dry_run)
+
+
+def _serve(args: argparse.Namespace, controller: HWExecController) -> None:
+    from hwexec.server import serve
+
+    serve(controller.config, mock=args.mock, host=args.host, port=args.port)
+    return None
 
 
 if __name__ == "__main__":

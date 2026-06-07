@@ -24,6 +24,10 @@ dataset:
 cameras:
   count: 1
   indices: [0]
+  roles:
+    front: 0
+    side: 1
+    wrist: 2
   width: 640
   height: 480
   fps: 30
@@ -77,3 +81,8 @@ agent:
 
 github:
   repo: https://github.com/0xsaltylollipop/hongkong-hack.git
+
+server:
+  host: 127.0.0.1
+  port: 8765
+  ui_dir: ui-prototypes

@@ -23,6 +23,7 @@ hwexec --mock gripper open
 hwexec --mock run-policy --steps 20
 hwexec --mock dataset inspect
 hwexec-agent --mock "run the sorting policy"
+hwexec serve --mock
 ```
 
 The package is importable too:
@@ -119,6 +120,42 @@ The runner system prompt tells Claude:
 - stay within configured limits
 - stop on clamp, hardware error, or unexpected observation
 
+## Control-plane web API
+
+`hwexec serve` exposes the static TENDON UI and the three live API endpoints the
+prototype already calls. It serves everything from one origin, so the browser
+does not need CORS.
+
+```bash
+hwexec serve --mock
+# open http://localhost:8765/run-detail.html
+```
+
+Endpoints:
+
+- `POST /api/run` with `{ "goal": "push the red block into the left zone" }`
+  starts a run and returns `{ "runId": "..." }`.
+- `GET /api/events` streams default Server-Sent Events. Each `data:` payload is
+  one JSON object with `kind: "log"`, `kind: "run"`, or `kind: "telemetry"`.
+- `GET /api/cameras` returns MJPEG URLs for `front`, `side`, and `wrist`; in
+  `--mock` it returns `{}` so UI placeholders stay visible.
+
+Mock mode requires no robot, cameras, policy files, or `ANTHROPIC_API_KEY`.
+Pressing **Run agent** streams a believable observe → move → run-policy → verify
+sequence into the UI log.
+
+Real mode:
+
+```bash
+export ANTHROPIC_API_KEY=...
+hwexec serve
+```
+
+In real mode the server launches the Claude Agent SDK with the configured model
+and effort. Claude operates through `hwexec` from this repo. Camera streams use
+OpenCV if it is installed on the hardware laptop; install with
+`pip install -e ".[camera]"` if needed.
+
 Config defaults target:
 
 - model: `claude-opus-4-8`
@@ -199,6 +236,7 @@ hwexec --mock gripper open
 hwexec --mock run-policy --steps 3
 hwexec --mock dataset inspect
 hwexec-agent --mock "observe, move home, observe again"
+hwexec serve --mock
 ```
 
 If `ANTHROPIC_API_KEY` is missing, the last command exits with a clear message.
@@ -250,6 +288,15 @@ hwexec-agent "push the block"
 
 ```bash
 hwexec dataset inspect
+```
+
+7. Control-plane UI drives the same endpoints:
+
+```bash
+hwexec serve --mock
+# open http://localhost:8765/run-detail.html and press Run agent
+hwexec serve
+# repeat after cameras, arm calibration, and ANTHROPIC_API_KEY are ready
 ```
 
 ## Assumptions and version notes

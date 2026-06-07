@@ -38,6 +38,7 @@ class DatasetConfig:
 class CameraConfig:
     count: int = 1
     indices: list[int | str] = field(default_factory=lambda: [0])
+    roles: dict[str, int | str] = field(default_factory=lambda: {"front": 0, "side": 1, "wrist": 2})
     width: int = 640
     height: int = 480
     fps: int = 30
@@ -78,6 +79,13 @@ class GitHubConfig:
 
 
 @dataclass(frozen=True)
+class ServerConfig:
+    host: str = "127.0.0.1"
+    port: int = 8765
+    ui_dir: str = "ui-prototypes"
+
+
+@dataclass(frozen=True)
 class HWExecConfig:
     robot: RobotConfig = field(default_factory=RobotConfig)
     policy: PolicyConfig = field(default_factory=PolicyConfig)
@@ -86,6 +94,7 @@ class HWExecConfig:
     safety: SafetyConfig = field(default_factory=SafetyConfig)
     agent: AgentConfig = field(default_factory=AgentConfig)
     github: GitHubConfig = field(default_factory=GitHubConfig)
+    server: ServerConfig = field(default_factory=ServerConfig)
     path: Path | None = None
 
 
@@ -121,6 +130,7 @@ def _from_raw(raw: dict[str, Any], path: Path | None) -> HWExecConfig:
     safety = raw.get("safety", {}) or {}
     agent = raw.get("agent", {}) or {}
     github = raw.get("github", {}) or {}
+    server = raw.get("server", {}) or {}
 
     return HWExecConfig(
         robot=RobotConfig(**_known(robot, RobotConfig)),
@@ -136,6 +146,7 @@ def _from_raw(raw: dict[str, Any], path: Path | None) -> HWExecConfig:
         ),
         agent=AgentConfig(**_known(agent, AgentConfig)),
         github=GitHubConfig(**_known(github, GitHubConfig)),
+        server=ServerConfig(**_known(server, ServerConfig)),
         path=path,
     )
 
