@@ -35,7 +35,7 @@ function EpGrid() {
 
 export default function WorldModel() {
   const navigate = useNavigate()
-  const [brief, setBrief] = useState('stack two blocks into a tower')
+  const [brief, setBrief] = useState('sort the red and blue cubes into matching bins')
 
   return (
     <div className="app">
@@ -71,8 +71,9 @@ export default function WorldModel() {
             <h1 className="vtitle">Teach a new skill in&nbsp;minutes</h1>
           </div>
           <div className="kpis">
-            <div className="kpi"><b>~4<small> min</small></b><span>sim → deployable</span></div>
-            <div className="kpi"><b>0</b><span>real demos needed</span></div>
+            <div className="kpi"><b>63</b><span>real teleop episodes</span></div>
+            <div className="kpi"><b>DINOv2</b><span>frozen feature backbone</span></div>
+            <div className="kpi"><b>0.73</b><span>val loss · epoch 1</span></div>
           </div>
         </div>
 
@@ -91,11 +92,11 @@ export default function WorldModel() {
         {/* pipeline */}
         <div className="pipeline">
 
-          {/* 01 — generate */}
+          {/* 01 — capture */}
           <div className="stage">
             <div className="num">01</div>
-            <h4>Generate synthetic episodes</h4>
-            <p>The world model dreams thousands of rollouts — no teleop, no real demos.</p>
+            <h4>Encode real trajectories</h4>
+            <p>Sixty three teleop episodes on the SO101 pass through frozen DINOv2 and become latent rollouts the predictor can learn from.</p>
             <EpGrid />
             <div className="arrow">▸</div>
           </div>
@@ -103,11 +104,11 @@ export default function WorldModel() {
           {/* 02 — train */}
           <div className="stage">
             <div className="num">02</div>
-            <h4>Train policy in sim</h4>
-            <p>Fit on the synthetic set. The fast inner loop — minutes, not weeks.</p>
+            <h4>Train DINO-WM predictor</h4>
+            <p>A small transformer learns next feature given current feature plus action. Frozen encoder, single A100 on Modal, about one hour per epoch.</p>
             <div className="lossbox">
               <div className="mono" style={{ fontSize: '9px', color: 'var(--ink-3)', display: 'flex', justifyContent: 'space-between' }}>
-                <span>training loss</span><span>0.041 ↓</span>
+                <span>validation loss</span><span>0.73 ↓</span>
               </div>
               <svg className="loss-svg" viewBox="0 0 300 80" preserveAspectRatio="none">
                 <line className="grid-line" x1="0" y1="27" x2="300" y2="27" />
@@ -116,7 +117,7 @@ export default function WorldModel() {
                 <circle className="loss-dot" cx="296" cy="75" r="3.5" />
               </svg>
               <div className="progress"><i /></div>
-              <div className="mono" style={{ fontSize: '9px', color: 'var(--ink-3)', marginTop: '7px' }}>epoch 38 / 40</div>
+              <div className="mono" style={{ fontSize: '9px', color: 'var(--ink-3)', marginTop: '7px' }}>epoch 1 · 1949 batches · frameskip 10</div>
             </div>
             <div className="arrow">▸</div>
           </div>
@@ -129,8 +130,8 @@ export default function WorldModel() {
             <div className="deploy">
               <div className="skill-out">
                 <div>
-                  <div style={{ fontWeight: 700, fontSize: '13px' }}>stack-blocks</div>
-                  <div className="mono" style={{ fontSize: '9px', color: 'var(--ink-3)' }}>trained on 2,048 synthetic eps</div>
+                  <div style={{ fontWeight: 700, fontSize: '13px' }}>cube-sort</div>
+                  <div className="mono" style={{ fontSize: '9px', color: 'var(--ink-3)' }}>DINO-WM · 63 real episodes · SO101</div>
                 </div>
                 <span className="badge badge-live"><span className="dot" /> ready</span>
               </div>
@@ -148,11 +149,11 @@ export default function WorldModel() {
 
         {/* loop note */}
         <div className="loopnote">
-          <span><b>World model</b> = the speed (synthetic, instant)</span>
+          <span><b>DINO-WM</b> predicts the future in feature space</span>
           <span>→</span>
-          <span><b>Execution environment</b> = the truth (real hardware)</span>
+          <span><b>MPC planner</b> picks the action sequence whose dream lands on the goal</span>
           <span>→</span>
-          <span><b>Together</b> = physical iteration at software speed</span>
+          <span><b>SO101</b> executes on metal in the loop</span>
         </div>
 
       </main>
