@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TENDON · Fleet</title>
+<link rel="stylesheet" href="lab.css">
+</head>
+<body>
+<div id="texture"></div>
+<div class="app">
+
+  <header class="topbar">
+    <div class="bar">
+      <div class="brand"><span class="brand-mark">TENDON</span><span class="brand-tm">™</span>
+        <span class="brand-tag">remote hardware execution lab</span></div>
+      <nav class="nav">
+        <a href="fleet.html" class="active">Fleet</a>
+        <a href="run-detail.html">Run</a>
+        <a href="world-model.html">World&nbsp;Model</a>
+        <a href="#skills">Skills</a>
+      </nav>
+      <span class="spacer"></span>
+      <div class="legend-top">
+        <span><span class="sw" style="background:var(--live)"></span> live</span>
+        <span><span class="sw" style="background:var(--roadmap)"></span> roadmap</span>
+      </div>
+      <div class="node-pill"><span class="dot"></span> 1 live · 11 provisioning</div>
+      <div class="avatar">JC</div>
+    </div>
+  </header>
+
+  <main class="view">
+
+    <div class="vhead">
+      <div class="lhs">
+        <span class="eyebrow">Fleet · remote execution nodes</span>
+        <h1 class="vtitle">Execution fleet</h1>
+      </div>
+      <div class="kpis">
+        <div class="kpi"><b>01</b><span>live now</span></div>
+        <div class="kpi"><b style="color:var(--roadmap)">12</b><span style="color:var(--roadmap)">fleet · roadmap</span></div>
+        <div class="kpi"><b data-count="1248">1,248</b><span style="color:var(--roadmap)">runs today · roadmap</span></div>
+        <div class="kpi"><b>94%</b><span>avg success</span></div>
+      </div>
+    </div>
+
+    <div class="fleet-body">
+
+      <!-- node grid -->
+      <div class="fleet-grid">
+
+        <a href="run-detail.html" class="panel node">
+          <div class="cam thumb" data-cam="fleet-01">
+            <div class="feed"></div><div class="scan"></div>
+            <svg class="arm" viewBox="0 0 400 230" preserveAspectRatio="xMidYMid slice">
+              <rect class="target" x="70" y="150" width="64" height="36" rx="3"></rect>
+              <rect class="block" x="280" y="156" width="24" height="24" rx="3"></rect>
+              <polyline class="lim" points="200,218 198,135 250,105 298,148"></polyline>
+              <circle class="joint" cx="200" cy="218" r="8"></circle><circle class="joint" cx="198" cy="135" r="7"></circle>
+            </svg>
+            <div class="cam-label"><span class="cam-rec"><span class="dot"></span> REC</span></div>
+          </div>
+          <div class="node-body">
+            <div class="node-row"><span class="node-name">Arm-01</span><span class="badge badge-live"><span class="dot"></span> live</span></div>
+            <div class="node-task">▶ push the red block left</div>
+            <div class="node-agent"><span class="node-loc">SHENZHEN · SO-101</span></div>
+            <div class="mini-bar"><i style="width:94%"></i></div>
+          </div>
+        </a>
+
+        <div class="panel node roadmap"><span class="ribbon badge badge-roadmap">roadmap</span>
+          <div class="cam thumb"><div class="feed"></div>
+            <svg class="arm" viewBox="0 0 400 230" preserveAspectRatio="xMidYMid slice">
+              <polyline class="lim" points="200,218 205,135 260,115"></polyline><circle class="joint" cx="200" cy="218" r="8"></circle>
+              <rect class="block" x="262" y="105" width="20" height="20" rx="3"></rect></svg></div>
+          <div class="node-body"><div class="node-row"><span class="node-name">Arm-02</span><span class="node-loc">HK</span></div>
+            <div class="node-task">▶ sort cubes by color</div><div class="node-agent"><span class="dot"></span> agent: claude</div>
+            <div class="mini-bar"><i style="width:88%"></i></div></div></div>
+
+        <div class="panel node roadmap"><span class="ribbon badge badge-roadmap">roadmap</span>
+          <div class="cam thumb"><div class="feed"></div>
+            <svg class="arm" viewBox="0 0 400 230" preserveAspectRatio="xMidYMid slice">
+              <polyline class="lim" points="180,218 220,145 300,135"></polyline><circle class="joint" cx="180" cy="218" r="8"></circle></svg></div>
+          <div class="node-body"><div class="node-row"><span class="node-name">Arm-03</span><span class="node-loc">SHENZHEN</span></div>
+            <div class="node-task">⚙ training: insert peg</div><div class="node-agent"><span class="dot"></span> world-model run</div>
+            <div class="mini-bar"><i style="width:61%"></i></div></div></div>
+
+        <div class="panel node roadmap"><span class="ribbon badge badge-roadmap">roadmap</span>
+          <div class="cam thumb"><div class="feed"></div>
+            <svg class="arm" viewBox="0 0 400 230" preserveAspectRatio="xMidYMid slice">
+              <polyline class="lim" points="200,218 200,135 250,125"></polyline><circle class="joint" cx="200" cy="218" r="8"></circle></svg></div>
+          <div class="node-body"><div class="node-row"><span class="node-name">Arm-04</span><span class="node-loc">SHENZHEN</span></div>
+            <div class="node-task" style="color:var(--ink-3)">○ idle · available</div><div class="node-agent" style="color:var(--ink-3)">no agent</div>
+            <div class="mini-bar"><i style="width:0"></i></div></div></div>
+
+        <div class="panel node roadmap"><span class="ribbon badge badge-roadmap">roadmap</span>
+          <div class="cam thumb"><div class="feed"></div>
+            <svg class="arm" viewBox="0 0 400 230" preserveAspectRatio="xMidYMid slice">
+              <polyline class="lim" points="210,218 200,135 270,155"></polyline><circle class="joint" cx="210" cy="218" r="8"></circle>
+              <rect class="block" x="272" y="145" width="20" height="20" rx="3"></rect></svg></div>
+          <div class="node-body"><div class="node-row"><span class="node-name">Arm-05</span><span class="node-loc">HK</span></div>
+            <div class="node-task">▶ stack blocks</div><div class="node-agent"><span class="dot"></span> agent: claude</div>
+            <div class="mini-bar"><i style="width:73%"></i></div></div></div>
+
+        <div class="panel node roadmap"><span class="ribbon badge badge-roadmap">roadmap</span>
+          <div class="cam thumb"><div class="feed"></div>
+            <svg class="arm" viewBox="0 0 400 230" preserveAspectRatio="xMidYMid slice">
+              <polyline class="lim" points="190,218 210,135 280,125"></polyline><circle class="joint" cx="190" cy="218" r="8"></circle></svg></div>
+          <div class="node-body"><div class="node-row"><span class="node-name">Arm-06</span><span class="node-loc">SHENZHEN</span></div>
+            <div class="node-task">⚙ adapting community skill</div><div class="node-agent"><span class="dot"></span> world-model run</div>
+            <div class="mini-bar"><i style="width:44%"></i></div></div></div>
+      </div>
+
+      <!-- rail: flywheel + skills -->
+      <div class="rail" id="skills">
+        <div class="panel fly"><span class="badge badge-roadmap" style="position:absolute;top:10px;right:10px">roadmap</span>
+          <svg viewBox="0 0 200 200" aria-hidden="true">
+            <circle class="ring" cx="100" cy="100" r="80"></circle>
+            <g class="orbit">
+              <circle class="node-d" cx="100" cy="20" r="6"></circle><circle class="node-l" cx="176" cy="76" r="6"></circle>
+              <circle class="node-d" cx="147" cy="166" r="6"></circle><circle class="node-l" cx="53" cy="166" r="6"></circle>
+              <circle class="node-l" cx="24" cy="76" r="6"></circle></g></svg>
+          <div class="count" data-count="1248">1,248</div>
+          <div class="mono" style="font-size:9px;color:var(--ink-3);letter-spacing:.06em">executions → data → world model → skills ↻</div>
+        </div>
+
+        <div class="panel" style="display:flex;flex-direction:column;min-height:0">
+          <div class="panel-head"><h3>Skill library</h3><span class="spacer"></span><span class="mono">2 live · community soon</span></div>
+          <div class="skills">
+            <div class="skill"><div class="nm">push-block <span class="badge badge-live"><span class="dot"></span>live</span></div>
+              <div class="st">94% · 120 runs · direct control</div><div class="mini-bar"><i style="width:94%"></i></div></div>
+            <div class="skill"><div class="nm">sort-cubes <span class="badge badge-live"><span class="dot"></span>live</span></div>
+              <div class="st">88% · 340 runs · ACT policy</div><div class="mini-bar"><i style="width:88%"></i></div></div>
+            <div class="skill roadmap"><div class="nm">stack-blocks <span class="badge badge-roadmap">community</span></div>
+              <div class="st">world-model adapted · shareable</div><div class="mini-bar"><i style="width:70%"></i></div></div>
+            <div class="skill roadmap"><div class="nm">insert-peg <span class="badge badge-roadmap">community</span></div>
+              <div class="st">re-adapt in sim if it doesn’t transfer</div><div class="mini-bar"><i style="width:52%"></i></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+<script src="lab.js"></script>
+</body>
+</html>

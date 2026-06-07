@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TENDON · Run detail</title>
+<link rel="stylesheet" href="lab.css">
+</head>
+<body>
+<div id="texture"></div>
+<div class="app">
+
+  <header class="topbar">
+    <div class="bar">
+      <div class="brand"><span class="brand-mark">TENDON</span><span class="brand-tm">™</span>
+        <span class="brand-tag">remote hardware execution lab</span></div>
+      <nav class="nav">
+        <a href="fleet.html">Fleet</a>
+        <a href="run-detail.html" class="active">Run</a>
+        <a href="world-model.html">World&nbsp;Model</a>
+        <a href="fleet.html#skills">Skills</a>
+      </nav>
+      <span class="spacer"></span>
+      <div class="legend-top">
+        <span><span class="sw" style="background:var(--live)"></span> live</span>
+        <span><span class="sw" style="background:var(--roadmap)"></span> roadmap</span>
+      </div>
+      <div class="node-pill"><span class="dot"></span> <b>Arm-01</b> · Shenzhen · <span data-clock>00:00:00.000</span></div>
+      <div class="avatar">JC</div>
+    </div>
+  </header>
+
+  <main class="view">
+
+    <!-- header -->
+    <div class="vhead">
+      <div class="run-title">
+        <span class="eyebrow">Live run · executed by agent</span>
+        <h1 class="vtitle">“push the red block&nbsp;left” <em>→</em></h1>
+        <div class="steps">
+          <span class="s done"></span><span class="s done"></span><span class="s done"></span>
+          <span class="s done"></span><span class="s now"></span><span class="s"></span><span class="s"></span>
+          <span class="mono" style="font-size:11px;color:var(--ink-2);margin-left:6px">step 5 / 7</span>
+        </div>
+      </div>
+      <div class="run-meta">
+        <div><span>Agent</span><b>claude-opus-4.8</b></div>
+        <div><span>Skill mode</span><b>direct control</b></div>
+        <div><span>Run id</span><b class="mono">r_8f31c</b></div>
+        <div><span>Status</span><b style="color:var(--live)">● executing</b></div>
+      </div>
+    </div>
+
+    <!-- camera + log -->
+    <div class="detail-grid">
+      <div class="cam-stack">
+
+        <!-- FRONT (hero) -->
+        <div class="cam" data-cam="front">
+          <div class="feed"></div><div class="scan"></div>
+          <svg class="arm" viewBox="0 0 800 360" preserveAspectRatio="xMidYMid slice">
+            <rect class="target" x="170" y="250" width="120" height="64" rx="4"></rect>
+            <rect class="block" x="560" y="262" width="44" height="44" rx="4"></rect>
+            <rect x="350" y="334" width="120" height="20" rx="4" fill="#2a2f37"></rect>
+            <polyline class="lim" points="410,334 408,236 500,168"></polyline>
+            <polyline class="lim" points="500,168 588,252"></polyline>
+            <circle class="joint" cx="410" cy="334" r="12"></circle>
+            <circle class="joint" cx="408" cy="236" r="10"></circle>
+            <circle class="joint" cx="500" cy="168" r="9"></circle>
+            <polyline class="grip" points="588,252 610,240"></polyline>
+            <polyline class="grip" points="588,252 610,266"></polyline>
+          </svg>
+          <span class="reticle"></span>
+          <div class="cam-label"><span class="cam-tag">FRONT · 1080p</span><span class="cam-rec"><span class="dot"></span> REC</span></div>
+          <div class="cam-ph">live stream placeholder · cam “front”</div>
+          <span class="cam-time" data-clock>00:00:00.000</span>
+        </div>
+
+        <div class="cam-thumbs">
+          <!-- SIDE -->
+          <div class="cam" data-cam="side">
+            <div class="feed"></div><div class="scan"></div>
+            <svg class="arm" viewBox="0 0 400 230" preserveAspectRatio="xMidYMid slice">
+              <polyline class="lim" points="120,215 200,140 280,158"></polyline>
+              <circle class="joint" cx="120" cy="215" r="8"></circle>
+              <circle class="joint" cx="200" cy="140" r="7"></circle>
+              <rect class="block" x="284" y="148" width="24" height="24" rx="3"></rect>
+            </svg>
+            <div class="cam-label"><span class="cam-tag">SIDE</span></div>
+            <div class="cam-ph">cam “side”</div>
+          </div>
+          <!-- WRIST -->
+          <div class="cam" data-cam="wrist">
+            <div class="feed"></div><div class="scan"></div>
+            <svg class="arm" viewBox="0 0 400 230" preserveAspectRatio="xMidYMid slice">
+              <circle class="target" cx="200" cy="120" r="44"></circle>
+              <rect class="block" x="187" y="107" width="26" height="26" rx="3"></rect>
+              <polyline class="grip" points="162,120 187,120"></polyline>
+              <polyline class="grip" points="238,120 213,120"></polyline>
+            </svg>
+            <div class="cam-label"><span class="cam-tag">WRIST · top-down</span></div>
+            <div class="cam-ph">cam “wrist”</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- agent log -->
+      <div class="panel log-panel">
+        <div class="panel-head">
+          <span class="badge badge-live"><span class="dot"></span> live</span>
+          <h3>Agent activity</h3><span class="spacer"></span>
+          <span class="mono">reasoning + hwexec calls</span>
+        </div>
+        <div class="log" id="log"></div>
+      </div>
+    </div>
+
+    <!-- telemetry -->
+    <div class="telemetry">
+      <div class="metric"><div class="lab">Joint torque · J1–J5</div><div class="spark" data-spark></div></div>
+      <div class="metric"><div class="lab">Gripper</div><div class="val">closed <small>· 31N</small></div></div>
+      <div class="metric ok"><div class="lab">Verify signal</div><div class="val">✓ on&nbsp;track</div></div>
+      <div class="metric"><div class="lab">Skill success rate</div><div class="val"><span data-rate>94.0</span><small>%</small></div></div>
+      <div class="metric"><div class="lab">Round-trip latency</div><div class="val"><span data-latency>42</span><small>ms · SZ↔edge</small></div></div>
+    </div>
+
+  </main>
+</div>
+<script src="lab.js"></script>
+</body>
+</html>

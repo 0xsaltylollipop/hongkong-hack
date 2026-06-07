@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TENDON · World model</title>
+<link rel="stylesheet" href="lab.css">
+</head>
+<body>
+<div id="texture"></div>
+<div class="app">
+
+  <header class="topbar">
+    <div class="bar">
+      <div class="brand"><span class="brand-mark">TENDON</span><span class="brand-tm">™</span>
+        <span class="brand-tag">remote hardware execution lab</span></div>
+      <nav class="nav">
+        <a href="fleet.html">Fleet</a>
+        <a href="run-detail.html">Run</a>
+        <a href="world-model.html" class="active">World&nbsp;Model</a>
+        <a href="fleet.html#skills">Skills</a>
+      </nav>
+      <span class="spacer"></span>
+      <div class="legend-top">
+        <span><span class="sw" style="background:var(--live)"></span> live</span>
+        <span><span class="sw" style="background:var(--roadmap)"></span> roadmap</span>
+      </div>
+      <div class="node-pill"><span class="dot"></span> <b>Arm-01</b> · Shenzhen · <span data-clock>00:00:00.000</span></div>
+      <div class="avatar">JC</div>
+    </div>
+  </header>
+
+  <main class="view">
+
+    <div class="vhead">
+      <div class="lhs">
+        <span class="eyebrow">World model · policy factory</span>
+        <h1 class="vtitle">Teach a new skill in&nbsp;minutes</h1>
+      </div>
+      <div class="kpis">
+        <div class="kpi"><b>~4<small> min</small></b><span>sim → deployable</span></div>
+        <div class="kpi"><b>0</b><span>real demos needed</span></div>
+      </div>
+    </div>
+
+    <div class="panel brief">
+      <span class="lab">Skill brief</span>
+      <input value="stack two blocks into a tower" spellcheck="false">
+      <span class="badge badge-syn">synthetic</span>
+      <button class="btn btn-fill">Generate ▸</button>
+    </div>
+
+    <div class="pipeline">
+      <!-- 01 -->
+      <div class="stage">
+        <div class="num">01</div>
+        <h4>Generate synthetic episodes</h4>
+        <p>The world model dreams thousands of rollouts — no teleop, no real demos.</p>
+        <div class="ep-grid" id="epgrid"></div>
+        <div class="arrow">▸</div>
+      </div>
+      <!-- 02 -->
+      <div class="stage">
+        <div class="num">02</div>
+        <h4>Train policy in sim</h4>
+        <p>Fit on the synthetic set. The fast inner loop — minutes, not weeks.</p>
+        <div class="lossbox">
+          <div class="mono" style="font-size:9px;color:var(--ink-3);display:flex;justify-content:space-between"><span>training loss</span><span>0.041 ↓</span></div>
+          <svg class="loss-svg" viewBox="0 0 300 80" preserveAspectRatio="none">
+            <line class="grid" x1="0" y1="27" x2="300" y2="27"></line>
+            <line class="grid" x1="0" y1="54" x2="300" y2="54"></line>
+            <path class="curve" d="M5 12 C 55 58, 95 70, 150 73 S 250 76, 296 75"></path>
+            <circle class="dot" cx="296" cy="75" r="3.5"></circle>
+          </svg>
+          <div class="progress"><i></i></div>
+          <div class="mono" style="font-size:9px;color:var(--ink-3);margin-top:7px">epoch 38 / 40</div>
+        </div>
+        <div class="arrow">▸</div>
+      </div>
+      <!-- 03 -->
+      <div class="stage">
+        <div class="num">03</div>
+        <h4>Deploy → real arm</h4>
+        <p>Validate on metal through the execution environment. The outer loop — ground truth.</p>
+        <div class="deploy">
+          <div class="skill-out">
+            <div><div style="font-weight:700;font-size:13px">stack-blocks</div>
+              <div class="mono" style="font-size:9px;color:var(--ink-3)">trained on 2,048 synthetic eps</div></div>
+            <span class="badge badge-live"><span class="dot"></span> ready</span>
+          </div>
+          <button class="btn btn-fill" style="justify-content:center">▶ Run on Arm-01 · Shenzhen</button>
+          <button class="btn btn-ghost" style="justify-content:center">Save to skill library</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="loopnote">
+      <span><b>World model</b> = the speed (synthetic, instant)</span><span>→</span>
+      <span><b>Execution environment</b> = the truth (real hardware)</span><span>→</span>
+      <span><b>Together</b> = physical iteration at software speed</span>
+    </div>
+
+  </main>
+</div>
+<script src="lab.js"></script>
+<script>
+  (function(){
+    const g=document.getElementById('epgrid'); if(!g) return;
+    const arms=['M30,72 L34,44 L60,38','M30,72 L30,42 L58,50','M28,72 L40,46 L64,42','M32,72 L28,44 L56,54'];
+    let html='';
+    for(let i=0;i<8;i++){
+      const a=arms[i%arms.length];
+      html+=`<div class="ep" style="animation-delay:${(i*0.12).toFixed(2)}s">
+        <div class="feed"></div>
+        <svg viewBox="0 0 80 78" preserveAspectRatio="xMidYMid slice">
+          <polyline points="${a}" fill="none" stroke="#6b7480" stroke-width="3" stroke-linecap="round"></polyline>
+          <rect x="58" y="40" width="9" height="9" rx="2" fill="#c8462f"></rect></svg>
+        <span class="syn">SYN</span></div>`;
+    }
+    g.innerHTML=html;
+  })();
+</script>
+</body>
+</html>
