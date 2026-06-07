@@ -6,18 +6,25 @@ interface CamPanelProps {
   camId: string
   label: string
   size?: CamSize
+  streamUrl?: string
   showRec?: boolean
   showTime?: boolean
 }
 
-export function CamPanel({ camId, label, size = 'front', showRec = false, showTime = false }: CamPanelProps) {
+export function CamPanel({ camId, label, size = 'front', streamUrl, showRec = false, showTime = false }: CamPanelProps) {
   return (
-    <div className="cam" data-cam={camId}>
+    <div className={`cam ${streamUrl ? 'streaming' : ''}`} data-cam={camId}>
       <div className="feed" />
       <div className="scan" />
-      {size === 'front'  && <FrontArm />}
-      {size === 'side'   && <SideArm />}
-      {size === 'wrist'  && <WristArm />}
+      {streamUrl ? (
+        <img className="vid" src={streamUrl} alt={`${label} camera stream`} />
+      ) : (
+        <>
+          {size === 'front'  && <FrontArm />}
+          {size === 'side'   && <SideArm />}
+          {size === 'wrist'  && <WristArm />}
+        </>
+      )}
       {size === 'front'  && <span className="reticle" />}
       <div className="cam-label">
         <span className="cam-tag">{label}</span>
@@ -27,7 +34,7 @@ export function CamPanel({ camId, label, size = 'front', showRec = false, showTi
           </span>
         )}
       </div>
-      <div className="cam-ph">live stream placeholder · cam &quot;{camId}&quot;</div>
+      {!streamUrl && <div className="cam-ph">live stream placeholder · cam &quot;{camId}&quot;</div>}
       {showTime && (
         <span className="cam-time">
           <Clock />

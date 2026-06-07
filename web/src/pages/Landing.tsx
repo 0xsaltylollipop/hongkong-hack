@@ -18,7 +18,7 @@ export default function Landing() {
             <span className="brand-tag">remote hardware execution lab</span>
           </div>
           <span className="spacer" />
-          <button className="btn btn-fill" onClick={() => navigate('/fleet')}>Open dashboard ▸</button>
+          <button className="btn btn-fill" onClick={() => navigate('/dashboard')}>Open dashboard ▸</button>
         </div>
       </header>
 
@@ -35,7 +35,7 @@ export default function Landing() {
             </p>
 
             <div style={{ display: 'flex', gap: '10px', marginTop: '8px' }}>
-              <button className="btn btn-fill" onClick={() => navigate('/fleet')}>Open dashboard ▸</button>
+              <button className="btn btn-fill" onClick={() => navigate('/dashboard')}>Open dashboard ▸</button>
             </div>
           </div>
 

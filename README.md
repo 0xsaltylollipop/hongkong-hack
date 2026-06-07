@@ -128,7 +128,7 @@ does not need CORS.
 
 ```bash
 hwexec serve --mock
-# open http://localhost:8765/run-detail.html
+# open http://localhost:8765/dashboard
 ```
 
 Endpoints:
@@ -144,6 +144,15 @@ Mock mode requires no robot, cameras, policy files, or `ANTHROPIC_API_KEY`.
 Pressing **Run agent** streams a believable observe → move → run-policy → verify
 sequence into the UI log.
 
+The served UI is the React app in `web/`. Build it before running the Python
+server:
+
+```bash
+npm --prefix web install
+npm --prefix web run build
+hwexec serve --mock
+```
+
 Real mode:
 
 ```bash
@@ -152,9 +161,19 @@ hwexec serve
 ```
 
 In real mode the server launches the Claude Agent SDK with the configured model
-and effort. Claude operates through `hwexec` from this repo. Camera streams use
-OpenCV if it is installed on the hardware laptop; install with
+and effort. Claude operates through `hwexec` from this repo, with a system prompt
+that says it can use the SO-101 arms to test physical prototypes, manipulate
+objects, run the ACT policy, gather observations, and verify outcomes. Camera
+streams use OpenCV if it is installed on the hardware laptop; install with
 `pip install -e ".[camera]"` if needed.
+
+For frontend development, run the React dev server separately; it proxies
+`/api/*` and `/cam/*` to `hwexec serve`:
+
+```bash
+hwexec serve --mock
+npm --prefix web run dev
+```
 
 Config defaults target:
 
@@ -294,7 +313,7 @@ hwexec dataset inspect
 
 ```bash
 hwexec serve --mock
-# open http://localhost:8765/run-detail.html and press Run agent
+# open http://localhost:8765/dashboard and press Run agent
 hwexec serve
 # repeat after cameras, arm calibration, and ANTHROPIC_API_KEY are ready
 ```

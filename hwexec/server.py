@@ -11,7 +11,7 @@ from typing import Any, AsyncIterator
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import JSONResponse, StreamingResponse
+from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 
 from hwexec.agent_runner import COMMAND_REFERENCE
@@ -104,8 +104,11 @@ def create_app(config: HWExecConfig, mock: bool = False) -> FastAPI:
 
     ui_dir = Path(config.server.ui_dir)
     if not ui_dir.exists():
-        raise RuntimeError(f"UI directory not found: {ui_dir}")
-    app.mount("/", StaticFiles(directory=ui_dir, html=True), name="ui")
+        raise RuntimeError(
+            f"UI directory not found: {ui_dir}. "
+            "For the React UI, run `npm --prefix web install` and `npm --prefix web run build` first."
+        )
+    _mount_ui(app, ui_dir)
     return app
 
 
@@ -115,6 +118,25 @@ def serve(config: HWExecConfig, mock: bool = False, host: str | None = None, por
     bind_host = host or os.environ.get("HWEXEC_HOST") or config.server.host
     bind_port = port or int(os.environ.get("HWEXEC_PORT") or config.server.port)
     uvicorn.run(create_app(config, mock=mock), host=bind_host, port=bind_port)
+
+
+def _mount_ui(app: FastAPI, ui_dir: Path) -> None:
+    assets_dir = ui_dir / "assets"
+    if assets_dir.exists():
+        app.mount("/assets", StaticFiles(directory=assets_dir), name="assets")
+
+    @app.get("/{path:path}")
+    async def spa(path: str) -> FileResponse:
+        requested = (ui_dir / path).resolve()
+        root = ui_dir.resolve()
+        if requested.is_file() and requested.is_relative_to(root):
+            return FileResponse(requested)
+
+        index = ui_dir / "index.html"
+        if index.exists():
+            return FileResponse(index)
+
+        raise HTTPException(status_code=404, detail=f"Static UI file not found: {path}")
 
 
 async def _run_goal(bus: EventBus, config: HWExecConfig, goal: str, run_id: str, mock: bool) -> None:
@@ -207,6 +229,7 @@ Hands-off operating rules:
 - Move slowly and conservatively. Prefer named poses and dry-runs before unfamiliar motion.
 - Stay within configured joint limits. Stop if hwexec reports clamping, hardware errors, or unexpected observations.
 - Use the ACT sorting policy when the goal calls for sorting or when direct control should hand off to the learned skill.
+- You may use the arms to test physical prototypes, manipulate objects, run repeatable checks, gather observations, and verify outcomes.
 - Keep narration concise for a live control-plane log.
 
 {COMMAND_REFERENCE}

@@ -7,23 +7,32 @@ import { TelemetryBar } from '@/components/TelemetryBar'
 type LogKind = 'think' | 'cmd' | 'out' | 'ok' | 'err'
 type RunStatus = 'draft' | 'running' | 'complete'
 interface LogEntry { id: number; kind: LogKind; text: string }
+interface RunEvent { kind: 'run'; step?: number; total?: number; status?: RunStatus }
+interface LogEvent { kind: 'log'; type?: LogKind; text?: string }
+interface TelemetryEvent { kind: 'telemetry'; joints?: number[]; gripper?: string; successRate?: number; latencyMs?: number }
+type StreamEvent = RunEvent | LogEvent | TelemetryEvent
+type CameraMap = Partial<Record<'front' | 'side' | 'wrist', string>>
 
 const TOTAL_STEPS = 7
 
 export default function Dashboard() {
   const navigate = useNavigate()
-  const [goal, setGoal] = useState('Describe the task you want the agent to run')
+  const [goal, setGoal] = useState('push the red block into the left zone')
   const [running, setRunning] = useState(false)
   const [status, setStatus] = useState<RunStatus>('draft')
   const [stepsDone, setStepsDone] = useState(0)
   const [entries, setEntries] = useState<LogEntry[]>([])
+  const [cameras, setCameras] = useState<CameraMap>({})
   const nextId = useRef(1)
   const timerRef = useRef<number | null>(null)
+  const eventSourceRef = useRef<EventSource | null>(null)
   const logRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
+    void loadCameras()
     return () => {
       if (timerRef.current) window.clearTimeout(timerRef.current)
+      if (eventSourceRef.current) eventSourceRef.current.close()
     }
   }, [])
 
@@ -43,6 +52,16 @@ export default function Dashboard() {
       const next = [...prev, { id: nextId.current++, kind, text }]
       return next.length > 60 ? next.slice(-60) : next
     })
+  }
+
+  async function loadCameras() {
+    try {
+      const res = await fetch('/api/cameras')
+      if (!res.ok) return
+      setCameras(await res.json())
+    } catch {
+      setCameras({})
+    }
   }
 
   function toHtml(kind: LogKind, text: string) {
@@ -92,13 +111,55 @@ export default function Dashboard() {
     tick()
   }
 
-  function onRun() {
+  async function runBackend(goalText: string) {
+    const res = await fetch('/api/run', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ goal: goalText }),
+    })
+    if (!res.ok) throw new Error(`backend returned ${res.status}`)
+    await res.json()
+
+    eventSourceRef.current?.close()
+    eventSourceRef.current = new EventSource('/api/events')
+    eventSourceRef.current.onmessage = event => {
+      const data = JSON.parse(event.data) as StreamEvent
+      if (data.kind === 'log') {
+        addLog(data.type || 'out', data.text || '')
+        return
+      }
+      if (data.kind === 'run') {
+        setStepsDone(Math.min(data.total || TOTAL_STEPS, data.step || 0))
+        if (data.status) setStatus(data.status)
+        if (data.status === 'complete') {
+          setRunning(false)
+          eventSourceRef.current?.close()
+          eventSourceRef.current = null
+        }
+      }
+    }
+    eventSourceRef.current.onerror = () => {
+      addLog('err', 'lost backend event stream')
+      setRunning(false)
+      setStatus('complete')
+      eventSourceRef.current?.close()
+      eventSourceRef.current = null
+    }
+  }
+
+  async function onRun() {
     if (running) return
+    const goalText = goal.trim() || 'run the demo'
     setRunning(true)
     setStatus('running')
     setStepsDone(0)
     setEntries([])
-    runMock(goal.trim() || 'Describe the task you want the agent to run')
+    try {
+      await runBackend(goalText)
+    } catch (error) {
+      addLog('err', `backend unavailable; falling back to browser mock (${error instanceof Error ? error.message : 'unknown error'})`)
+      runMock(goalText)
+    }
   }
 
   return (
@@ -137,6 +198,12 @@ export default function Dashboard() {
                 className="goal-input"
                 spellCheck={false}
                 value={goal}
+                onKeyDown={e => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault()
+                    void onRun()
+                  }
+                }}
                 onChange={e => {
                   setGoal(e.target.value)
                   if (!running) setStatus('draft')
@@ -163,10 +230,10 @@ export default function Dashboard() {
         <div className="detail-grid">
 
           <div className="cam-stack">
-            <CamPanel camId="front" label="FRONT · 1080p" size="front" showRec showTime />
+            <CamPanel camId="front" label="FRONT · 1080p" size="front" streamUrl={cameras.front} showRec showTime />
             <div className="cam-thumbs">
-              <CamPanel camId="side"  label="SIDE"            size="side"  />
-              <CamPanel camId="wrist" label="WRIST · top-down" size="wrist" />
+              <CamPanel camId="side"  label="SIDE"             size="side"  streamUrl={cameras.side} />
+              <CamPanel camId="wrist" label="WRIST · top-down" size="wrist" streamUrl={cameras.wrist} />
             </div>
           </div>
 

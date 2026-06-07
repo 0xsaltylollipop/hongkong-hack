@@ -85,4 +85,4 @@ github:
 server:
   host: 127.0.0.1
   port: 8765
-  ui_dir: ui-prototypes
+  ui_dir: web/dist
