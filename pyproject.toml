@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hongkong-hack-hwexec"
+version = "0.1.0"
+description = "Hardware execution environment for AI agents controlling LeRobot SO101 arms."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "PyYAML>=6.0",
+  "anyio>=4.0",
+  "claude-agent-sdk>=0.1.0",
+  "python-dotenv>=1.0",
+]
+
+[project.optional-dependencies]
+hardware = [
+  "lerobot[feetech]>=0.5.1",
+]
+
+[project.scripts]
+hwexec = "hwexec.cli:main"
+hwexec-agent = "hwexec.agent_runner:main"
+
+[tool.setuptools.packages.find]
+include = ["hwexec*"]
