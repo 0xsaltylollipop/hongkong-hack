@@ -53,40 +53,91 @@ TENDON.wireCameraStream=function(id,stream){
   v.srcObject=stream; cam.classList.add('streaming');
 };
 
-/* ---------- streaming agent log ---------- */
-(function agentLog(){
-  const log=document.getElementById('log'); if(!log) return;
-  const script=[
-    ['think','goal received: <b>push the red block into the left zone</b>'],
-    ['cmd','hwexec observe --cameras front,wrist'],
-    ['out','→ joints[0.02,-1.11,1.34,0.08,-0.55] · block@(0.41,0.18) · zone@(0.22,0.20)'],
-    ['think','block is right of the target. plan: approach from the right face, push left along x.'],
-    ['cmd','hwexec move --pose approach --speed 0.3'],
-    ['out','→ moving … contact in 3 waypoints'],
-    ['ok','✓ reached approach pose · gripper closed'],
-    ['cmd','hwexec move --delta x=-0.19 --speed 0.25'],
-    ['out','→ pushing … block displacement 0.17m'],
-    ['cmd','hwexec observe --verify zone=left'],
-    ['out','→ block@(0.23,0.20) · inside zone bounds'],
-    ['ok','✓ verified: block in left zone · run complete (7/7)'],
-    ['think','logging trajectory → execution feeds the data flywheel.'],
-  ];
-  let i=0,ln=1;
-  function add(){
-    const [k,txt]=script[i%script.length];
-    const row=document.createElement('div'); row.className='ln';
-    const body=({
-      think:`<span class="think"><span class="k">think</span> ${txt}</span>`,
-      cmd:`<span class="cmd"><span class="p">$</span> ${txt}</span>`,
-      out:`<span class="out">${txt}</span>`,
-      ok:`<span class="ok">${txt}</span>`
-    })[k];
-    row.innerHTML=`<span class="gut">${String(ln).padStart(2,'0')}</span>${body}`;
-    log.appendChild(row); log.scrollTop=log.scrollHeight; ln++; i++;
-    while(log.children.length>40) log.removeChild(log.firstChild);
+/* ---------- auto-connect cameras (no-op if no backend) ---------- */
+(async function connectCameras(){
+  try{
+    const r=await fetch('/api/cameras'); if(!r.ok) return;
+    const cams=await r.json();
+    Object.entries(cams||{}).forEach(([id,url])=>{ if(url) TENDON.wireCameraMJPEG(id,url); });
+  }catch(e){/* no backend → keep placeholders */}
+})();
+
+/* ---------- goal → draft → RUN (agent runs hands-off) ---------- */
+(function runUI(){
+  const btn=document.getElementById('runbtn');
+  const log=document.getElementById('log');
+  const goalEl=document.getElementById('goal');
+  const stepsEl=document.getElementById('steps');
+  const statusEl=document.getElementById('runstatus');
+  if(!btn||!log||!stepsEl) return;            /* only on run-detail */
+  const TOTAL=7; let running=false, es=null;
+
+  function steps(done,active){
+    let h='';
+    for(let i=0;i<TOTAL;i++) h+=`<span class="s ${i<done?'done':(i===done&&active?'now':'')}"></span>`;
+    const note = active?`step ${Math.min(done+1,TOTAL)} / ${TOTAL}` : (done>=TOTAL?'complete':'draft · ready to run');
+    stepsEl.innerHTML=h+`<span class="mono" style="font-size:11px;color:var(--ink-2);margin-left:6px">${note}</span>`;
   }
-  for(let j=0;j<7;j++) add();
-  setInterval(add,1500);
+  function status(t,c){ if(statusEl){statusEl.textContent=t;statusEl.style.color=c;} }
+  function line(k,txt,ln){
+    const row=document.createElement('div'); row.className='ln';
+    const b=({think:`<span class="think"><span class="k">think</span> ${txt}</span>`,cmd:`<span class="cmd"><span class="p">$</span> ${txt}</span>`,out:`<span class="out">${txt}</span>`,ok:`<span class="ok">${txt}</span>`,err:`<span class="err">${txt}</span>`})[k]||`<span class="out">${txt}</span>`;
+    row.innerHTML=`<span class="gut">${String(ln).padStart(2,'0')}</span>${b}`;
+    log.appendChild(row); log.scrollTop=log.scrollHeight;
+    while(log.children.length>60) log.removeChild(log.firstChild);
+  }
+  function finish(){ running=false; btn.classList.remove('running'); btn.disabled=false; btn.querySelector('.lbl').textContent='Run again'; status('complete','var(--ink)'); steps(TOTAL,false); if(es){es.close();es=null;} }
+  steps(0,false);
+
+  function mockRun(goal){
+    const s=[
+      ['think',`goal received: <b>${goal}</b>`],
+      ['cmd','hwexec observe --cameras front,side,wrist'],
+      ['out','→ joints[0.02,-1.11,1.34,0.08,-0.55] · block@(0.41,0.18) · zone@(0.22,0.20)'],
+      ['think','I can do this with direct control. plan: approach from the right, push left along x.'],
+      ['cmd','hwexec move --pose approach --speed 0.3'],
+      ['ok','✓ reached approach pose · gripper closed'],
+      ['cmd','hwexec move --delta x=-0.19 --speed 0.25'],
+      ['out','→ pushing … block displacement 0.17m'],
+      ['think','target needs a learned skill next — invoking the trained ACT policy.'],
+      ['cmd','hwexec run-policy sort'],
+      ['out','→ ACT policy executing on real arm …'],
+      ['cmd','hwexec observe --verify'],
+      ['ok','✓ verified from camera · task complete'],
+    ];
+    let i=0,ln=1,done=0;
+    (function nxt(){
+      if(i>=s.length){ finish(); return; }
+      const [k,t]=s[i++]; line(k,t,ln++);
+      if(k==='cmd'||k==='ok'){ done=Math.min(TOTAL,done+1); steps(done,true); }
+      setTimeout(nxt, 850+Math.random()*650);
+    })();
+  }
+
+  async function backendRun(goal){
+    try{
+      const r=await fetch('/api/run',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({goal})});
+      if(!r.ok) throw 0;
+      es=new EventSource('/api/events'); let ln=1;
+      es.onmessage=(e)=>{ try{
+        const d=JSON.parse(e.data);
+        if(d.kind==='log') line(d.type,d.text,ln++);
+        else if(d.kind==='run'){ steps(d.step||0, d.status!=='complete'); if(d.status==='complete') finish(); }
+      }catch(_){} };
+      return true;
+    }catch(e){ return false; }
+  }
+
+  btn.addEventListener('click', async ()=>{
+    if(running) return; running=true;
+    const goal=(goalEl&&goalEl.value.trim())||'run the demo';
+    log.innerHTML=''; btn.classList.add('running'); btn.disabled=true;
+    btn.querySelector('.lbl').textContent='Running…';
+    status('running','var(--live)'); steps(0,true);
+    const ok=await backendRun(goal);
+    if(!ok) mockRun(goal);
+  });
+  if(goalEl) goalEl.addEventListener('input',()=>{ if(!running) status('draft','var(--roadmap)'); });
 })();
 
 /* ---------- telemetry + counters ---------- */

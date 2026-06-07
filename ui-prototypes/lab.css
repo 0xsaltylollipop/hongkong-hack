@@ -142,6 +142,29 @@ body::before{
 .run-meta span{display:block;color:var(--ink-3);font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:3px}
 .run-meta b{color:var(--ink);font-weight:500;font-size:12.5px}
 
+/* goal composer */
+.goalbar{display:flex;align-items:center;gap:11px;min-width:0}
+.goal-tag{flex:none;font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);border:1px solid var(--line-2);border-radius:5px;padding:5px 8px}
+.goal-input{flex:1;min-width:0;border:none;background:transparent;font-family:var(--sans);font-weight:800;letter-spacing:-.035em;line-height:1;font-size:clamp(22px,2.7vw,34px);color:var(--ink);outline:none;padding:2px 0;border-bottom:1.5px solid transparent;transition:.15s}
+.goal-input:hover{border-bottom-color:var(--line)}
+.goal-input:focus{border-bottom-color:var(--ink)}
+.goal-input::placeholder{color:var(--ink-3)}
+
+/* run button (sexy) */
+.run-side{display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+.run-btn{display:inline-flex;align-items:center;gap:11px;font-family:var(--sans);font-weight:700;font-size:15px;letter-spacing:-.01em;color:var(--paper);background:var(--ink);border:none;border-radius:999px;padding:12px 26px;cursor:pointer;position:relative;box-shadow:0 10px 26px -12px rgba(17,17,14,.55);transition:transform .16s,box-shadow .16s}
+.run-btn:hover{transform:translateY(-2px);box-shadow:0 16px 34px -12px rgba(17,17,14,.6)}
+.run-btn:active{transform:translateY(0)}
+.run-btn:disabled{cursor:default}
+.run-btn .tri{width:0;height:0;border-left:11px solid var(--paper);border-top:7px solid transparent;border-bottom:7px solid transparent}
+.run-btn .spin{display:none;width:14px;height:14px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite}
+.run-btn.running{background:var(--live)}
+.run-btn.running .tri{display:none}
+.run-btn.running .spin{display:inline-block}
+.run-btn:not(.running)::after{content:"";position:absolute;inset:0;border-radius:999px;animation:rpulse 2.6s infinite;pointer-events:none}
+@keyframes rpulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--ink) 28%,transparent)}70%{box-shadow:0 0 0 13px transparent}100%{box-shadow:0 0 0 0 transparent}}
+.log-hint{color:var(--ink-3);font-style:italic;padding:8px 2px}
+
 .detail-grid{flex:1;min-height:0;display:grid;grid-template-columns:1.5fr 1fr;gap:var(--gap)}
 .cam-stack{display:grid;grid-template-rows:1.75fr 1fr;gap:var(--gap);min-height:0}
 .cam-thumbs{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap);min-height:0}

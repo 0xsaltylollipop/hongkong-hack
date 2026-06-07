@@ -32,22 +32,25 @@
 
   <main class="view">
 
-    <!-- header -->
+    <!-- header: goal composer + run button -->
     <div class="vhead">
-      <div class="run-title">
-        <span class="eyebrow">Live run · executed by agent</span>
-        <h1 class="vtitle">“push the red block&nbsp;left” <em>→</em></h1>
-        <div class="steps">
-          <span class="s done"></span><span class="s done"></span><span class="s done"></span>
-          <span class="s done"></span><span class="s now"></span><span class="s"></span><span class="s"></span>
-          <span class="mono" style="font-size:11px;color:var(--ink-2);margin-left:6px">step 5 / 7</span>
+      <div class="run-title" style="flex:1;min-width:0">
+        <span class="eyebrow">Mission · the agent runs hands-off</span>
+        <div class="goalbar">
+          <span class="goal-tag">Goal</span>
+          <input id="goal" class="goal-input" spellcheck="false" value="push the red block into the left zone">
         </div>
+        <div class="steps" id="steps"></div>
       </div>
-      <div class="run-meta">
-        <div><span>Agent</span><b>claude-opus-4.8</b></div>
-        <div><span>Skill mode</span><b>direct control</b></div>
-        <div><span>Run id</span><b class="mono">r_8f31c</b></div>
-        <div><span>Status</span><b style="color:var(--live)">● executing</b></div>
+      <div class="run-side">
+        <button class="run-btn" id="runbtn">
+          <span class="tri"></span><span class="spin"></span><span class="lbl">Run agent</span>
+        </button>
+        <div class="run-meta">
+          <div><span>Agent</span><b>claude-opus-4.8</b></div>
+          <div><span>Mode</span><b>autonomous</b></div>
+          <div><span>Status</span><b id="runstatus" style="color:var(--roadmap)">draft</b></div>
+        </div>
       </div>
     </div>
 
@@ -111,7 +114,7 @@
           <h3>Agent activity</h3><span class="spacer"></span>
           <span class="mono">reasoning + hwexec calls</span>
         </div>
-        <div class="log" id="log"></div>
+        <div class="log" id="log"><div class="log-hint">▶ Press “Run agent” — it operates the arm hands-off from here.</div></div>
       </div>
     </div>
 
